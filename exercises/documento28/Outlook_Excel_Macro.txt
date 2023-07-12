@@ -1,0 +1,55 @@
+Sub InviaEmailDaExcel()
+    Dim objExcel As Object
+    Dim objWorkbook As Object
+    Dim objWorksheet As Object
+    Dim objOutlook As Object
+    Dim objMail As Object
+    Dim rngEmails As Range
+    Dim cell As Range
+
+    ' Percorso del file Excel contenente gli indirizzi email
+    Dim filePath As String
+    filePath = "C:\Percorso\del\file\Excel.xlsx"
+
+    ' Nome del foglio di lavoro in Excel che contiene gli indirizzi email
+    Dim sheetName As String
+    sheetName = "Foglio1"
+
+    ' Raggio che specifica la gamma di celle contenenti gli indirizzi email
+    Dim emailRange As String
+    emailRange = "A1:A10"
+
+    ' Crea un oggetto Excel e apri il file
+    Set objExcel = CreateObject("Excel.Application")
+    Set objWorkbook = objExcel.Workbooks.Open(filePath)
+    Set objWorksheet = objWorkbook.Worksheets(sheetName)
+
+    ' Specifica la gamma di celle contenenti gli indirizzi email
+    Set rngEmails = objWorksheet.Range(emailRange)
+
+    ' Crea un oggetto Outlook
+    Set objOutlook = CreateObject("Outlook.Application")
+    Set objMail = objOutlook.CreateItem(0)
+
+    ' Cicla attraverso ogni cella nella gamma di celle degli indirizzi email
+    For Each cell In rngEmails
+        ' Aggiungi l'indirizzo email alla destinazione dell'email
+        objMail.Recipients.Add cell.Value
+    Next cell
+
+    ' Aggiungi un oggetto e un corpo all'email
+    objMail.Subject = "Oggetto dell'email"
+    objMail.Body = "Corpo dell'email"
+
+    ' Invia l'email
+    objMail.Send
+
+    ' Chiudi gli oggetti Excel e Outlook
+    objWorkbook.Close SaveChanges:=False
+    objExcel.Quit
+    Set objMail = Nothing
+    Set objOutlook = Nothing
+    Set objWorksheet = Nothing
+    Set objWorkbook = Nothing
+    Set objExcel = Nothing
+End Sub
